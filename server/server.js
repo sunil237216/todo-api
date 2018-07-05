@@ -3,12 +3,11 @@ var bodyParser =  require('body-parser');
 var {mongoose} = require('./db/moongose');
 var {Todo}  =   require('./models/todo');
 var {User}  =   require('./models/user');
-
 var app = express();
+
+
 app.use(bodyParser.json());
-
 app.post('/todos',(req,res) =>{
-
    console.log(req.body);
         var todo=new Todo({
         text:req.body.text
@@ -28,10 +27,32 @@ app.post('/todos',(req,res) =>{
         },(e) =>{
             res.status(400).send(e);
         });
-
         });
 
+        app.get('/todos/:id', function (req,res) {
+          
+          
+            var id=req.params.id;
 
+            var ObjectId = require('mongodb').ObjectID;
+            if(!ObjectId.isValid(id))
+            {
+                  return res.status(400).send();
+            }
+
+            Todo.findById(id).then((todo) =>{
+              if(!todo){
+
+                console.log('user does not exit');
+              }
+              res.send({todo});
+              }  ).catch((e) =>{
+                res.status(400).send();
+              })
+
+          //  res.send(req.params);
+ 
+         });
 
 app.listen(3000,() =>{
 

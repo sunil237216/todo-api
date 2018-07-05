@@ -58,7 +58,7 @@ app.post('/todos',(req,res) =>{
 
 app.listen(port,() =>{
 
-    console.log('started at port ${port}');
+    console.log('started at port',port);
 })
 
 

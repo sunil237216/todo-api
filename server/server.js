@@ -5,6 +5,8 @@ var {Todo}  =   require('./models/todo');
 var {User}  =   require('./models/user');
 var app = express();
 
+const port = process.env.PORT || 3000;
+
 
 app.use(bodyParser.json());
 app.post('/todos',(req,res) =>{
@@ -43,7 +45,7 @@ app.post('/todos',(req,res) =>{
             Todo.findById(id).then((todo) =>{
               if(!todo){
 
-                console.log('user does not exit');
+                res.status(404).send();
               }
               res.send({todo});
               }  ).catch((e) =>{
@@ -54,9 +56,9 @@ app.post('/todos',(req,res) =>{
  
          });
 
-app.listen(3000,() =>{
+app.listen(port,() =>{
 
-    console.log('listening to port 3000');
+    console.log('started at port ${port}');
 })
 
 

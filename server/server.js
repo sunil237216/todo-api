@@ -1,12 +1,14 @@
-var express = require('express');
-var bodyParser = require('body-parser');
-var {
+const express = require('express');
+
+const _ =require("lodash");
+const bodyParser = require('body-parser');
+const {
     mongoose
 } = require('./db/moongose');
-var {
+const {
     Todo
 } = require('./models/todo');
-var {
+const {
     User
 } = require('./models/user');
 var app = express();
@@ -27,6 +29,21 @@ app.post('/todos', (req, res) => {
     })
 });
 
+app.post('/todos/update', (req, res) => {
+    Todo.findOneAndUpdate({
+        _id :req.body.id},
+        {
+          $set:{
+            text:req.body.text
+          }
+        },{
+            returnOriginal:false
+      }).then((result) =>{
+        console.log(result);
+        });
+});
+
+
 app.get('/todos', (req, res) => {
     Todo.find().then((todos) => {
         res.send({
@@ -39,9 +56,7 @@ app.get('/todos', (req, res) => {
 
 app.get('/todos/:id', function (req, res) {
 
-
     var id = req.params.id;
-
     var ObjectId = require('mongodb').ObjectID;
     if (!ObjectId.isValid(id)) {
         return res.status(400).send();
@@ -62,6 +77,28 @@ app.get('/todos/:id', function (req, res) {
     //  res.send(req.params);
 
 });
+
+app.post('/users',(req,res) =>
+{
+var body =_.pick(req.body,['email','password']);
+var user =new User(body);
+
+user.save().then(() =>{
+  // res.send(user);
+   return user.generateAuthToken();
+
+}).then((token) =>{
+
+   res.header('x-auth',token).send(user);
+
+}).catch((e) =>{
+    console.log(e);
+    res.status(400).send(e);
+});
+});
+
+
+
 
 
 app.delete('/todos/:id', function (req, res) {

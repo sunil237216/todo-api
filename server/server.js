@@ -1,5 +1,7 @@
 const express = require('express');
 
+const {authenticate} = require('./middleware/authenticate');
+
 const _ =require("lodash");
 const bodyParser = require('body-parser');
 const {
@@ -99,13 +101,14 @@ user.save().then(() =>{
 
 
 
+app.get('/users/me',authenticate,(req,res) => {
+     
+    res.send(req.user);
 
+});
 
 app.delete('/todos/:id', function (req, res) {
-
-
     var id = req.params.id;
-
     var ObjectId = require('mongodb').ObjectID;
     if (!ObjectId.isValid(id)) {
         return res.status(400).send();
